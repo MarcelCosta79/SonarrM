@@ -1,4 +1,4 @@
-FROM linuxserver/sabnzbd:latest
+FROM linuxserver/sonarr:preview
 RUN apt-get -y update
 RUN apt-get -y install wget nano gnupg
 RUN wget -q -O - https://mkvtoolnix.download/gpg-pub-moritzbunkus.txt | apt-key add
