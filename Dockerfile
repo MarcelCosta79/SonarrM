@@ -5,6 +5,5 @@ RUN wget -q -O - https://mkvtoolnix.download/gpg-pub-moritzbunkus.txt | apt-key 
 RUN apt-get update
 RUN apt -y install mkvtoolnix mkvtoolnix-gui
 RUN mkdir /scripts
-COPY scripts/ /scripts
-RUN chmod 751 /scripts/batchconvert.sh
-RUN chmod 751 /scripts/oneconverter.sh
+COPY scripts/ /config/scripts
+RUN chmod 751 /config/scripts/strip.sh
