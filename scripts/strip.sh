@@ -1,16 +1,21 @@
 #!/bin/bash
-env > /tv/env_var.txt
+
+
+# Most part of the code. I've just made some tweaks.
+# Credits: https://github.com/theskyisthelimit/ubtuntumkvtoolnix
+#
+#
+#
+
 fpath="$sonarr_episodefile_path"
 file=$(basename "$fpath")
 ss=$(dirname "$fpath")
 cd "$ss"
-env > /tv/env_var2.txt
-
    mkvmerge -I "$file"
    audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(por\|eng\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
    audiocount=$(echo $audio | tr "," "\n" | wc -l)
    echo "1: found $audio ($audiocount) to keep"
-   subs=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: subtitles (SubRip\/SRT).* language:\(por\|eng\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
+   subs=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: subtitles [(HDMV\/PGS)|(VobSub)|(SubRip\/SRT)].* language:\(por\|eng\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
    subscount=$(echo $subs | tr "," "\n" | wc -l)
    echo "2: found $subs ($subscount) to keep"
    totalaudio=$(mkvmerge -I "$file" | grep audio | wc -l)
@@ -26,9 +31,9 @@ env > /tv/env_var2.txt
        subs=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: subtitles [(SubStationAlpha)|(ASS)|(HDMV/PGS)|(VobSub)].*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
        echo "5: found $subs to remove"
 
-       if [ -z "$subs" ]
+       if [ -z "$subs" ] # Executa se não tiver nenhum sub não válido
        then
-   			if [ $diffaudio -gt 0 ]
+   			if [ $diffaudio -gt 0 ] # Executa se tiver mais áudio que áudio válidos
 			then
 				echo diffaudio= $diffaudio
 				echo "6: Only needed audio found."
