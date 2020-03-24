@@ -1,6 +1,7 @@
 #!/bin/bash
-for file in "$1"
-do
+filepath="$sonarr_episodefile_path"
+file=$(basename "$filepath")
+
   audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(ger\|eng\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
   echo "found $audio audio to keep"
   subs=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: subtitles (SubRip\/SRT).* language:\(ger\|eng\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
@@ -30,5 +31,4 @@ do
       mv "${file%.mkv}".edited.mkv "$file"
       # mv "$1" /media/Trash/;
     fi
-    done
 exit
