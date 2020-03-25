@@ -1,4 +1,5 @@
 #!/bin/bash
+
 ####################################################################
 # Credits for the code.                                            #
 #  https://github.com/theskyisthelimit/ubtuntumkvtoolnix           #
@@ -6,10 +7,10 @@
 # I've just made some tweaks.                                      #
 ####################################################################
 
-######  PushOver API  ############
-APP_TOKEN="YOUR_TOKEN_HERE"
-USER_TOKEN="YOUR_USER_ID_HERE"
-##################################
+######  PushOver API  ############ So altere esses campos #############
+APP_TOKEN="aur35g2u3o7k6wy6rg5rcuoh4nokxr"
+USER_TOKEN="ukov8ca9heddn3f429qr212w2a51za"
+####################################################################
 
 
 fpath="$sonarr_episodefile_path"
@@ -50,11 +51,15 @@ cd "$ss"
 				mv "${file%.mkv}".edited.mkv "$file"
 				echo "7: Unwanted audio found and removed!"
 				# mv "$1" /media/Trash/;
+				if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ]
+				then 
+					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN=$file - Audio removido!&title=SonarrM" -qO- > /dev/null 2>&1 &
+				fi
 			else
 				echo "6: Nothing found to remove. Will exit script now."
-				if [$APP_TOKEN != "YOUR_TOKEN_HERE"]
+				if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ]
 				then 
-					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file" - Nothing found to remove"&title=SonarrM"
+					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Nada para remover&title=SonarrM" -qO- > /dev/null 2>&1 &
 				fi
 			fi
        else
@@ -64,11 +69,19 @@ cd "$ss"
          mv "${file%.mkv}".edited.mkv "$file"
          echo "7: PGS/ASS/VobSub Subtitles found and removed!"
          # mv "$1" /media/Trash/;
+		 if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ]
+			then 
+				wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Legendas, PGS/ASS/VobSuB, removidas&title=SonarrM" -qO- > /dev/null 2>&1 &
+			fi
        fi
 	
 	 elif [ $diffsubs -eq 0 -a $diffaudio -eq 0 ]
 	 then
 	   echo "3: Only needed audio and subtitles found" 
+	   if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ]
+		then 
+				wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Nada para alterar.&title=SonarrM" -qO- > /dev/null 2>&1 &
+		fi
 	  
      else
        echo "3: Found Subtitles. Will multiplex now"
@@ -78,5 +91,9 @@ cd "$ss"
        mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
        mv "${file%.mkv}".edited.mkv "$file"
        # mv "$1" /media/Trash/;
+	   if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ]
+		then 
+					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Legendas localizadas.&title=SonarrM" -qO- > /dev/null 2>&1 &
+		fi
      fi
 exit

@@ -12,12 +12,11 @@ USER_TOKEN="YOUR_USER_ID_HERE"
 ##################################
 
 
-
-
 fpath="$sonarr_episodefile_path"
 file=$(basename "$fpath")
 ss=$(dirname "$fpath")
 cd "$ss"
+
 
    mkvmerge -I "$file"
    audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(por\|eng\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
@@ -53,6 +52,10 @@ cd "$ss"
 				# mv "$1" /media/Trash/;
 			else
 				echo "6: Nothing found to remove. Will exit script now."
+				if [$APP_TOKEN != "YOUR_TOKEN_HERE"]
+				then 
+					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file" - Nothing found to remove"&title=SonarrM"
+				fi
 			fi
        else
          subs="-S";
