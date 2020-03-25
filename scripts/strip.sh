@@ -1,16 +1,24 @@
 #!/bin/bash
+####################################################################
+# Credits for the code.                                            #
+#  https://github.com/theskyisthelimit/ubtuntumkvtoolnix           #
+#                                                                  #
+# I've just made some tweaks.                                      #
+####################################################################
+
+######  PushOver API  ############
+APP_TOKEN="YOUR_TOKEN_HERE"
+USER_TOKEN="YOUR_USER_ID_HERE"
+##################################
 
 
-# Most part of the code. I've just made some tweaks.
-# Credits: https://github.com/theskyisthelimit/ubtuntumkvtoolnix
-#
-#
-#
+
 
 fpath="$sonarr_episodefile_path"
 file=$(basename "$fpath")
 ss=$(dirname "$fpath")
 cd "$ss"
+
    mkvmerge -I "$file"
    audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(por\|eng\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
    audiocount=$(echo $audio | tr "," "\n" | wc -l)
@@ -68,5 +76,4 @@ cd "$ss"
        mv "${file%.mkv}".edited.mkv "$file"
        # mv "$1" /media/Trash/;
      fi
-
 exit
