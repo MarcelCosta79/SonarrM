@@ -10,8 +10,8 @@ exec 1>> /config/logs/striplog.txt 2>&1
 ####################################################################
 
 ###############  PushOver API  ############ So altere esses campos #
-APP_TOKEN="aur35g2u3o7k6wy6rg5rcuoh4nokxr"
-USER_TOKEN="ukov8ca9heddn3f429qr212w2a51za"
+APP_TOKEN="YOUR_TOKEN_HERE"
+USER_TOKEN="YOUR_TOKEN_HERE"
 ####################################################################
 
 
