@@ -10,8 +10,8 @@ exec 1>> /config/logs/striplog.txt 2>&1
 ####################################################################
 
 ###############  PushOver API  ############ So altere esses campos #
-APP_TOKEN="YOUR_TOKEN_HERE"
-USER_TOKEN="YOUR_USER_ID_HERE"
+APP_TOKEN="aur35g2u3o7k6wy6rg5rcuoh4nokxr"
+USER_TOKEN="ukov8ca9heddn3f429qr212w2a51za"
 ####################################################################
 
 
@@ -88,23 +88,43 @@ cd "$ss"
      else
        echo "3: Found Subtitles. Will multiplex now"
        subs="-s $subs";
+	   audi=$audio; # keep the value of the original $audio var
        audio="-a $audio";
-
-       mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
-       mv "${file%.mkv}".edited.mkv "$file"
-       # mv "$1" /media/Trash/;
-	   if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
+		if [ -z "$audi" ]
 		then
-			if [ $diffsubs -gt 0 -a $diffaudio -gt 0 ]
-			then 
-					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
-			elif [ $diffaudio -gt 0 ]
+			mkvmerge $subs -o "${file%.mkv}".edited.mkv "$file";
+			mv "${file%.mkv}".edited.mkv "$file"
+			# mv "$1" /media/Trash/;
+				if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
+				then
+					if [ $diffsubs -gt 0 ]
+					then 
+						wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Only foreign audio, kept it. Unwanted subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
+					elif [ $diffsubs -eq 0 ]
+					then
+						wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Only foreign audio, kept it.&title=SonarrM" -qO- > /dev/null 2>&1 &
+					
+					fi
+				fi
+		
+		
+		else
+			mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
+			mv "${file%.mkv}".edited.mkv "$file"
+			# mv "$1" /media/Trash/;
+			if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
 			then
+				if [ $diffsubs -gt 0 -a $diffaudio -gt 0 ]
+				then 
+					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Audio and Subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
+				elif [ $diffaudio -gt 0 ]
+				then
+					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Audio removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
+				elif [ $diffsubs -gt 0 ]
+				then	
 					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
-			elif [ $diffsubs -gt 0 -a $diffaudio -gt 0 ]
-			then	
-					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
+				fi
 			fi
 		fi
-     fi
+	fi
 exit
