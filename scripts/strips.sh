@@ -43,9 +43,8 @@ cd "$ss"
 
        if [ -z "$subs" ] # Loop if there is no invalid subtitle.
        then
-   			if [ $diffaudio -gt 0 ] # Loop if there are more audio than valid audios.
+   			if [ -n "$audio" -a $diffaudio -gt 0  ] # Loop if there are more audio than valid audios.
 			then
-				echo diffaudio= $diffaudio
 				echo "6: Only needed audio found."
 				subs="-S";
 				audio="-a $audio";
@@ -65,15 +64,27 @@ cd "$ss"
 				fi
 			fi
        else
-         subs="-S";
-         audio="-a $audio";
-         mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
-         mv "${file%.mkv}".edited.mkv "$file"
-         echo "7: PGS/ASS/VobSub Subtitles found and removed!"
-         # mv "$1" /media/Trash/;
-		 if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
-			then 
-				wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Unwanted subtitles removed&title=SonarrM" -qO- > /dev/null 2>&1 &
+			if [ -z "$audio" ]
+			then
+				subs="-S";
+				 mkvmerge $subs -o "${file%.mkv}".edited.mkv "$file";
+				 mv "${file%.mkv}".edited.mkv "$file"
+				 echo "7: PGS/ASS/VobSub Subtitles found and removed!"
+				 # mv "$1" /media/Trash/;
+					if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
+					then 
+							wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Only foreign audio, kept it. Unwanted subtitles removed&title=SonarrM" -qO- > /dev/null 2>&1 &
+					fi
+			else
+				subs="-S";
+				audio="-a $audio";
+				mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
+				mv "${file%.mkv}".edited.mkv "$file"
+				# mv "$1" /media/Trash/;
+					if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
+					then 
+							wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Unwanted Audio and subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
+					fi
 			fi
        fi
 	
@@ -87,11 +98,10 @@ cd "$ss"
 	  
      else
        echo "3: Found Subtitles. Will multiplex now"
-       subs="-s $subs";
-	   audi=$audio; # keep the value of the original $audio var
-       audio="-a $audio";
-		if [ -z "$audi" ]
+		if [ -z "$audio" ]
 		then
+			subs="-s $subs";
+			audio="-a $audio";
 			mkvmerge $subs -o "${file%.mkv}".edited.mkv "$file";
 			mv "${file%.mkv}".edited.mkv "$file"
 			# mv "$1" /media/Trash/;
@@ -109,6 +119,8 @@ cd "$ss"
 		
 		
 		else
+			subs="-s $subs";
+			audio="-a $audio";
 			mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
 			mv "${file%.mkv}".edited.mkv "$file"
 			# mv "$1" /media/Trash/;
