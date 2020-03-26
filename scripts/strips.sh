@@ -1,5 +1,7 @@
 #!/bin/bash
-
+exec 3>&1 4>&2
+trap 'exec 2>&4 1>&3' 0 1 2 3
+exec 1>> /config/logs/striplog.txt 2>&1
 ####################################################################
 # Credits for the code.                                            #
 #  https://github.com/theskyisthelimit/ubtuntumkvtoolnix           #
@@ -18,7 +20,7 @@ file=$(basename "$fpath")
 ss=$(dirname "$fpath")
 cd "$ss"
 
-
+   echo
    mkvmerge -I "$file"
    audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(por\|eng\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
    audiocount=$(echo $audio | tr "," "\n" | wc -l)
@@ -31,7 +33,7 @@ cd "$ss"
   
    diffaudio=$(expr $totalaudio - $audiocount)
    diffsubs=$(expr $totalsubs - $subscount)
-     if [ -z "$subs" ] # Loop if there is no valid subtitle.
+	if [ -z "$subs" ] # Loop if there is no valid subtitle.
      then
        audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(por\|eng\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
        echo "4: found $audio to keep"
@@ -91,6 +93,7 @@ cd "$ss"
        mv "${file%.mkv}".edited.mkv "$file"
        # mv "$1" /media/Trash/;
 	   if [ $APP_TOKEN != "YOUR_TOKEN_HERE" ] #Don't alter
+		then
 			if [ $diffsubs -gt 0 -a $diffaudio -gt 0 ]
 			then 
 					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
@@ -100,6 +103,7 @@ cd "$ss"
 			elif [ $diffsubs -gt 0 -a $diffaudio -gt 0 ]
 			then	
 					wget https://api.pushover.net/1/messages.json --post-data="token=$APP_TOKEN&user=$USER_TOKEN&message=$file - Subtitles removed.&title=SonarrM" -qO- > /dev/null 2>&1 &
+			fi
 		fi
      fi
 exit
