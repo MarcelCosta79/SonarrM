@@ -20,7 +20,8 @@ file=$(basename "$fpath")
 ss=$(dirname "$fpath")
 cd "$ss"
 
-   echo
+   echo 
+   echo $file
    mkvmerge -I "$file"
    audio=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: audio .* language:\(por\|eng\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
    audiocount=$(echo $audio | tr "," "\n" | wc -l)
