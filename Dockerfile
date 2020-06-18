@@ -7,3 +7,5 @@ RUN apt -y install mkvtoolnix mkvtoolnix-gui
 RUN mkdir /scripts
 COPY scripts/ /scripts
 RUN chmod 755 /scripts/strips.sh
+
+VOLUME /scripts
