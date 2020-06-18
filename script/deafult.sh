@@ -13,7 +13,7 @@ exec 1>> /config/logs/striplog.txt 2>&1
 APP_TOKEN="YOUR_TOKEN_HERE"
 USER_TOKEN="YOUR_TOKEN_HERE"
 ####################################################################
-
+ 
 
 fpath="$sonarr_episodefile_path"
 file=$(basename "$fpath")
